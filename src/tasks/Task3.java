@@ -1,51 +1,30 @@
 package tasks;
 
-import app.Main;
-
-import java.util.Scanner;
+import core.BinaryTree;
 
 public class Task3 {
     public static void run() {
-        Scanner sc = Main.sc;
+        BinaryTree tree = new BinaryTree();
 
-        System.out.print("Input n (<=15): ");
-        int n = sc.nextInt();
-
-        if (n <= 0 || n > 15) {
-            System.out.println("n must be between 1 and 15");
-            return;
+        // Adding elements
+        int[] valuesToAdd = { 50, 30, 70, 20, 40, 60, 80 };
+        for (int v : valuesToAdd) {
+            tree.add(v);
         }
 
-        int[][] X = new int[n][n];
-        System.out.println("Input matrix " + n + "x" + n + ":");
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                X[i][j] = sc.nextInt();
-            }
-        }
+        System.out.print("Tree after addition: ");
+        tree.printInOrder(); // 20 30 40 50 60 70 80
 
-        boolean[] L = new boolean[n];
+        // Search for elements
+        System.out.println("Is there 40? " + tree.contains(40)); // true
+        System.out.println("Is there 25? " + tree.contains(25)); // false
 
-        // Vector
-        for (int i = 0; i < n; i++) {
-            int negatives = 0;
-            int positives = 0;
-            for (int j = 0; j < n; j++) {
-                if (X[i][j] < 0)
-                    negatives++;
-                else if (X[i][j] > 0)
-                    positives++;
-            }
-            L[i] = (negatives > positives);
-        }
+        // Removing elements
+        tree.remove(20);
+        tree.remove(30);
+        tree.remove(50);
 
-        // Output
-        System.out.println("Logical vector L:");
-        for (int i = 0; i < n; i++) {
-            System.out.print(L[i] + " ");
-        }
-        System.out.println();
-
-        sc.nextLine();
+        System.out.print("Tree after deletions: ");
+        tree.printInOrder(); // 40 60 70 80
     }
 }

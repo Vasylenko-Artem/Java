@@ -5,7 +5,6 @@ import java.util.Scanner;
 import tasks.Task1;
 import tasks.Task2;
 import tasks.Task3;
-import tasks.Task4;
 
 public class Main {
     public static final Scanner sc = new Scanner(System.in);
@@ -43,9 +42,6 @@ public class Main {
                 case 3:
                     Task3.run();
                     break;
-                case 4:
-                    Task4.run();
-                    break;
                 case 0:
                     clearConsole();
                     sc.close();
@@ -65,7 +61,6 @@ public class Main {
         System.out.println("1 - Task 1");
         System.out.println("2 - Task 2");
         System.out.println("3 - Task 3");
-        System.out.println("4 - Task 4");
         System.out.println("\n0 - Exit");
     }
 
