@@ -1,41 +1,26 @@
 package tasks;
 
-import app.Main;
-
-import java.util.Scanner;
+// import app.Main;
+import core.Rational;
 
 public class Task1 {
-    public static double formula(double x, double y) {
-        return x * y + Math.pow(x + y, 3) / (x * x + y * y) * (x - y);
-    }
-
     public static void run() {
-        Scanner sc = Main.sc;
+        // Scanner sc = Main.sc;
 
-        // 1) double => double
-        System.out.print("Input x (double): ");
-        double x1 = sc.nextDouble();
-        System.out.print("Input y (double): ");
-        double y1 = sc.nextDouble();
-        double result1 = formula(x1, y1);
-        System.out.println("Result (double => double): " + result1);
+        Rational r1 = new Rational(2, 4);
+        Rational r2 = new Rational(3, 6);
 
-        // 2) int => double
-        System.out.print("\nInput x (int): ");
-        int x2 = sc.nextInt();
-        System.out.print("Input y (int): ");
-        int y2 = sc.nextInt();
-        double result2 = formula(x2, y2);
-        System.out.println("Result (int =>double): " + result2);
+        System.out.println("r1 = " + r1); // 1/2
+        System.out.println("r2 = " + r2); // 1/2
 
-        // 3) double => int
-        System.out.print("\nInput x (double): ");
-        double x3 = sc.nextDouble();
-        System.out.print("Input y (double): ");
-        double y3 = sc.nextDouble();
-        int result3 = (int) formula(x3, y3);
-        System.out.println("Result (double => int): " + result3);
+        System.out.println("r1 + r2 = " + r1.add(r2)); // 1
+        System.out.println("r1 - r2 = " + r1.subtract(r2)); // 0
+        System.out.println("r1 * r2 = " + r1.multiply(r2)); // 1/4
+        System.out.println("r1 / r2 = " + r1.divide(r2)); // 1
 
-        sc.nextLine();
+        System.out.println("r1 == r2 ? " + r1.equals(r2)); // true
+        System.out.println("r1 > r2 ? " + (r1.compareTo(r2) > 0)); // false
+
+        // sc.nextLine();
     }
 }

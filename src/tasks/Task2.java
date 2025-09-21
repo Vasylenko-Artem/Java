@@ -1,53 +1,22 @@
 package tasks;
 
-import app.Main;
-
-import java.util.Scanner;
+import core.QuadraticEquation;
+import java.util.Arrays;
 
 public class Task2 {
-
     public static void run() {
-        Scanner sc = Main.sc;
+        QuadraticEquation eq1 = new QuadraticEquation(1, -3, 2); // x^2 - 3x + 2 = 0
+        QuadraticEquation eq2 = new QuadraticEquation(1, 2, 1); // x^2 + 2x + 1 = 0
+        QuadraticEquation eq3 = new QuadraticEquation(1, 0, 1); // x^2 + 1 = 0
 
-        System.out.print("Input n (<=300): ");
-        int n = sc.nextInt();
+        QuadraticEquation[] equations = { eq1, eq2, eq3 };
 
-        if (n <= 0 || n > 300) {
-            System.out.println("n must be between 1 and 300");
-            return;
+        for (QuadraticEquation eq : equations) {
+            System.out.println("Рівняння: " + eq);
+            System.out.println("Кількість коренів: " + eq.getNumberOfRoots());
+            double[] roots = eq.getRoots();
+            System.out.println("Корені: " + (roots != null ? Arrays.toString(roots) : "немає коренів"));
+            System.out.println();
         }
-
-        int[] arr = new int[n];
-        System.out.println("Input " + n + " integers:");
-        for (int i = 0; i < n; i++) {
-            arr[i] = sc.nextInt();
-        }
-
-        // Find the longest chain
-        int bestLength = 1;
-        int bestValue = arr[0];
-        int currentLength = 1;
-
-        for (int i = 1; i < n; i++) {
-            if (arr[i] == arr[i - 1]) {
-                currentLength++;
-            } else {
-                currentLength = 1;
-            }
-
-            if (currentLength > bestLength) {
-                bestLength = currentLength;
-                bestValue = arr[i];
-            }
-        }
-
-        // Output
-        System.out.print("Longest chain (" + bestLength + " elements): ");
-        for (int i = 0; i < bestLength; i++) {
-            System.out.print(bestValue + " ");
-        }
-        System.out.println();
-
-        sc.nextLine();
     }
 }
