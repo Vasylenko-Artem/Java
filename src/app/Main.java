@@ -61,7 +61,6 @@ public class Main {
         System.out.println("1 - Task 1");
         System.out.println("2 - Task 2");
         System.out.println("3 - Task 3");
-        System.out.println("4 - Task 4");
         System.out.println("\n0 - Exit");
     }
 

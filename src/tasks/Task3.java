@@ -1,30 +1,29 @@
 package tasks;
 
-import core.BinaryTree;
+import series2.Exponential;
+import series2.Linear;
+import series2.Series;
 
 public class Task3 {
     public static void run() {
-        BinaryTree tree = new BinaryTree();
+        Series[] seriesArray = new Series[2];
 
-        // Добавляем элементы
-        int[] valuesToAdd = { 50, 30, 70, 20, 40, 60, 80 };
-        for (int v : valuesToAdd) {
-            tree.add(v);
+        seriesArray[0] = new Linear(2, 3); // 2, 5, 8, ...
+        seriesArray[1] = new Exponential(2, 2); // 2, 4, 8, ...
+
+        for (Series s : seriesArray) {
+            System.out.println(s.toString());
+            System.out.println("5th element: " + s.getElement(5));
+            System.out.println("Sum of the first 5 elements: " + s.getSum(5));
+            System.out.println();
         }
 
-        System.out.print("Дерево після додавання: ");
-        tree.printInOrder(); // 20 30 40 50 60 70 80
+        // equals
+        Linear l1 = new Linear(2, 3);
+        Linear l2 = new Linear(2, 3);
+        Exponential e1 = new Exponential(2, 2);
 
-        // Проверка поиска
-        System.out.println("Чи є 40? " + tree.contains(40)); // true
-        System.out.println("Чи є 25? " + tree.contains(25)); // false
-
-        // Удаляем элементы
-        tree.remove(20); // лист
-        tree.remove(30); // узел с одним ребенком
-        tree.remove(50); // узел с двумя детьми
-
-        System.out.print("Дерево після видалень: ");
-        tree.printInOrder(); // 40 60 70 80
+        System.out.println("l1.equals(l2) -> " + l1.equals(l2)); // true
+        System.out.println("l1.equals(e1) -> " + l1.equals(e1)); // false
     }
 }
