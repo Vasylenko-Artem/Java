@@ -1,29 +1,37 @@
 package tasks;
 
-import series.Exponential;
-import series.Linear;
-import series.Series;
+// Написати додаток,який підраховує кількість символів у кожному текстовому файлі.
+// Символи пробілу,повернення каретки,переходу на новий рядок і табуляції можуть
+// розташовуватися в тексті в будь-якому місці і в будь-якій кількості.
+// Ці символи рахувати не треба.Вивести назву файлу і кількість символів на екран.
+
+import static utils.Input.*;
+
+import java.io.*;
 
 public class Task2 {
     public static void run() {
-        Series[] seriesArray = new Series[2];
+        String filePath = readLine("Enter the path to the file: ");
 
-        seriesArray[0] = new Linear(2, 3); // 2, 5, 8, ...
-        seriesArray[1] = new Exponential(2, 2); // 2, 4, 8, ...
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            int totalChars = 0;
 
-        for (Series s : seriesArray) {
-            System.out.println(s.toString());
-            System.out.println("5th element: " + s.getElement(5));
-            System.out.println("Sum of the first 5 elements: " + s.getSum(5));
-            System.out.println();
+            while ((line = reader.readLine()) != null) {
+                for (char c : line.toCharArray()) {
+                    if (!Character.isWhitespace(c)) {
+                        totalChars++;
+                    }
+                }
+            }
+
+            System.out.println("File name: " + filePath);
+            System.out.println("Number of characters (excluding whitespace): " + totalChars);
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + filePath);
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + filePath);
         }
-
-        // equals
-        Linear l1 = new Linear(2, 3);
-        Linear l2 = new Linear(2, 3);
-        Exponential e1 = new Exponential(2, 2);
-
-        System.out.println("l1.equals(l2) -> " + l1.equals(l2)); // true
-        System.out.println("l1.equals(e1) -> " + l1.equals(e1)); // false
     }
 }

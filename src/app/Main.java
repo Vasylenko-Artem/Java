@@ -1,32 +1,17 @@
 package app;
 
-import java.util.Scanner;
+import static utils.Input.*;
 
 import tasks.Task1;
 import tasks.Task2;
-import tasks.Task3;
 
 public class Main {
-    public static final Scanner sc = new Scanner(System.in);
-
     public static void main(String[] args) {
-
         while (true) {
             clearConsole();
             printMenu();
 
-            int choice;
-            while (true) {
-                System.out.print("\nYour choice: ");
-                if (sc.hasNextInt()) {
-                    choice = sc.nextInt();
-                    sc.nextLine();
-                    break;
-                } else {
-                    System.out.println("Invalid input! Please enter a number.");
-                    sc.nextLine();
-                }
-            }
+            int choice = readInt("\nYour choice: ");
 
             clearConsole();
 
@@ -39,44 +24,37 @@ public class Main {
                 case 2:
                     Task2.run();
                     break;
-                case 3:
-                    Task3.run();
-                    break;
                 case 0:
                     clearConsole();
-                    sc.close();
-                    System.exit(0);
+                    System.out.println("Goodbye!");
+                    return;
                 default:
                     System.out.println("Invalid choice!");
             }
 
-            System.out.println("\nPress Enter to continue...");
-            sc.nextLine();
+            readLine("\nPress Enter to continue...");
         }
-
     }
 
-    public static void printMenu() {
+    private static void printMenu() {
         System.out.println("Choose a task:");
         System.out.println("1 - Task 1");
         System.out.println("2 - Task 2");
-        System.out.println("3 - Task 3");
         System.out.println("\n0 - Exit");
     }
 
-    public static void clearConsole() {
+    private static void clearConsole() {
         try {
             String os = System.getProperty("os.name");
-
             if (os.contains("Windows")) {
                 new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             } else {
                 new ProcessBuilder("clear").inheritIO().start().waitFor();
             }
         } catch (Exception e) {
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 50; i++) {
                 System.out.println();
+            }
         }
     }
-
 }
