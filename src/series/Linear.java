@@ -1,6 +1,6 @@
 package series;
 
-public class Linear extends Series {
+public class Linear extends Series implements Comparable<Linear> {
     public Linear(double first, double difference) {
         super(first, difference);
     }
@@ -29,5 +29,10 @@ public class Linear extends Series {
         Linear linear = (Linear) o;
         return Double.compare(linear.first, first) == 0 &&
                 Double.compare(linear.ratio, ratio) == 0;
+    }
+
+    @Override
+    public int compareTo(Linear o) {
+        return Double.compare(this.first, o.first);
     }
 }
