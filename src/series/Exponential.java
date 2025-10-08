@@ -1,6 +1,6 @@
 package series;
 
-public class Exponential extends Series {
+public class Exponential extends Series implements Comparable<Exponential> {
     public Exponential(double first, double denominator) {
         super(first, denominator);
     }
@@ -32,5 +32,10 @@ public class Exponential extends Series {
         Exponential exp = (Exponential) o;
         return Double.compare(exp.first, first) == 0 &&
                 Double.compare(exp.ratio, ratio) == 0;
+    }
+
+    @Override
+    public int compareTo(Exponential o) {
+        return Double.compare(this.first, o.first);
     }
 }

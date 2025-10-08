@@ -2,9 +2,7 @@ package app;
 
 import java.util.Scanner;
 
-import tasks.Task1;
-import tasks.Task2;
-import tasks.Task3;
+import tasks.*;
 
 public class Main {
     public static final Scanner sc = new Scanner(System.in);
@@ -39,9 +37,6 @@ public class Main {
                 case 2:
                     Task2.run();
                     break;
-                case 3:
-                    Task3.run();
-                    break;
                 case 0:
                     clearConsole();
                     sc.close();
@@ -60,7 +55,6 @@ public class Main {
         System.out.println("Choose a task:");
         System.out.println("1 - Task 1");
         System.out.println("2 - Task 2");
-        System.out.println("3 - Task 3");
         System.out.println("\n0 - Exit");
     }
 
