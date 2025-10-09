@@ -1,79 +1,184 @@
 package tasks;
 
-import static utils.Input.*;
+import utils.window.FlexibleFrame;
 
-import java.util.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Task2 {
+
     public static void run() {
-        int degree = readInt("Enter the degree of polynomials: ");
+        SwingUtilities.invokeLater(Task2Frame::new);
+    }
+}
 
-        System.out.println("Enter the coefficients of the first polynomial:");
-        Polynomial p1 = readPolynomial(sc, degree);
+// Власне виключення
+class CustomArithmeticException extends ArithmeticException {
+    public CustomArithmeticException(String message) {
+        super(message);
+    }
+}
 
-        System.out.println("Enter the coefficients of the second polynomial:");
-        Polynomial p2 = readPolynomial(sc, degree);
+// Основне вікно
+class Task2Frame extends JFrame {
+    private JTextField fileField;
+    private JTable matrixTable;
+    private JTable resultTable;
+    private JLabel statusLabel;
 
-        Polynomial sum = p1.add(p2);
+    public Task2Frame() {
+        FlexibleFrame frame = new FlexibleFrame();
+        frame.setTitle("Task 2");
 
-        System.out.println("\nThe first polynomial:   " + p1);
-        System.out.println("The second polynomial:   " + p2);
-        System.out.println("The sum of polynomials:   " + sum);
+        // Цвета
+        Color darkBg = new Color(13, 13, 13);
+        Color orange = new Color(255, 107, 0);
+        Color textColor = Color.WHITE;
+
+        frame.setBackground(darkBg);
+
+        // Панель верхняя
+        JPanel topPanel = new JPanel();
+        topPanel.setBackground(darkBg);
+
+        JLabel fileLabel = new JLabel("Файл:");
+        fileLabel.setForeground(orange);
+        topPanel.add(fileLabel);
+
+        fileField = new JTextField("test/matrix.txt", 20);
+        fileField.setBackground(darkBg);
+        fileField.setForeground(textColor);
+        fileField.setCaretColor(textColor);
+        topPanel.add(fileField);
+
+        JButton loadButton = new JButton("Завантажити");
+        loadButton.setBackground(orange);
+        loadButton.setForeground(Color.BLACK);
+        topPanel.add(loadButton);
+
+        // Таблицы
+        matrixTable = new JTable();
+        matrixTable.setBackground(darkBg);
+        matrixTable.setForeground(textColor);
+        matrixTable.setGridColor(orange);
+
+        resultTable = new JTable();
+        resultTable.setBackground(darkBg);
+        resultTable.setForeground(textColor);
+        resultTable.setGridColor(orange);
+
+        JPanel tablePanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        tablePanel.add(new JScrollPane(matrixTable));
+        tablePanel.add(new JScrollPane(resultTable));
+        tablePanel.setBackground(darkBg);
+
+        // Статус
+        statusLabel = new JLabel("Готово");
+        statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        statusLabel.setForeground(orange);
+        statusLabel.setBackground(darkBg);
+        statusLabel.setOpaque(true);
+
+        // Обработчик кнопки
+        loadButton.addActionListener(e -> loadMatrix());
+
+        frame.add(topPanel, BorderLayout.NORTH);
+        frame.add(tablePanel, BorderLayout.CENTER);
+        frame.add(statusLabel, BorderLayout.SOUTH);
+
     }
 
-    private static Polynomial readPolynomial(Scanner sc, int degree) {
-        HashMap<Integer, Double> coeffs = new HashMap<>();
-        for (int i = degree; i >= 0; i--) {
-            System.out.print("The coefficient at x^" + i + ": ");
-            coeffs.put(i, sc.nextDouble());
+    private void loadMatrix() {
+        String filename = fileField.getText().trim();
+
+        try {
+            List<double[]> rows = new ArrayList<>();
+            try (Scanner scanner = new Scanner(new File(filename))) {
+                while (scanner.hasNextLine()) {
+                    String[] parts = scanner.nextLine().trim().split("\\s+");
+                    double[] row = new double[parts.length];
+                    for (int i = 0; i < parts.length; i++) {
+                        row[i] = Double.parseDouble(parts[i]); // може викликати NumberFormatException
+                    }
+                    rows.add(row);
+                }
+            }
+
+            int n = rows.size();
+            if (n == 0)
+                throw new CustomArithmeticException("Матриця порожня!");
+            if (n > 15)
+                throw new CustomArithmeticException("Розмір матриці перевищує 15!");
+
+            double[][] matrix = rows.toArray(new double[0][]);
+            boolean[] logicVector = computeLogicVector(matrix);
+
+            // Виводимо у таблиці
+            showMatrix(matrix, logicVector);
+
+            statusLabel.setText("Матриця успішно завантажена ✅");
+
+        } catch (FileNotFoundException e) {
+            statusLabel.setText("Помилка: файл не знайдено ❌");
+        } catch (NumberFormatException e) {
+            statusLabel.setText("Помилка: невірний формат даних ❌");
+        } catch (CustomArithmeticException e) {
+            statusLabel.setText("Помилка: " + e.getMessage());
+        } catch (Exception e) {
+            statusLabel.setText("Невідома помилка: " + e.getMessage());
         }
-        return new Polynomial(coeffs);
     }
 
-    // Внутрішній клас
-    static class Polynomial {
-        private HashMap<Integer, Double> coeffs;
+    private boolean[] computeLogicVector(double[][] matrix) throws CustomArithmeticException {
+        int n = matrix.length;
+        boolean[] L = new boolean[n];
 
-        public Polynomial(HashMap<Integer, Double> coeffs) {
-            this.coeffs = coeffs;
-        }
-
-        public Polynomial add(Polynomial other) {
-            HashMap<Integer, Double> result = new HashMap<>(this.coeffs);
-
-            for (Map.Entry<Integer, Double> entry : other.coeffs.entrySet()) {
-                int power = entry.getKey();
-                double value = entry.getValue();
-                result.put(power, result.getOrDefault(power, 0.0) + value);
+        for (int i = 0; i < n; i++) {
+            int pos = 0, neg = 0;
+            for (double v : matrix[i]) {
+                if (v > 0)
+                    pos++;
+                else if (v < 0)
+                    neg++;
             }
-            return new Polynomial(result);
-        }
 
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            List<Integer> powers = new ArrayList<>(coeffs.keySet());
-            powers.sort(Collections.reverseOrder());
-
-            for (int p : powers) {
-                double c = coeffs.get(p);
-                if (c == 0)
-                    continue;
-
-                if (sb.length() > 0 && c > 0)
-                    sb.append(" + ");
-                else if (c < 0)
-                    sb.append(" - ");
-
-                double absC = Math.abs(c);
-                if (p == 0)
-                    sb.append(absC);
-                else if (p == 1)
-                    sb.append(absC + "x");
-                else
-                    sb.append(absC + "x^" + p);
+            // Наприклад: генеруємо власне виключення, якщо рядок містить тільки нулі
+            if (pos == 0 && neg == 0) {
+                throw new CustomArithmeticException("У рядку " + (i + 1) + " всі елементи = 0");
             }
-            return sb.toString();
+
+            L[i] = neg > pos;
         }
+
+        return L;
+    }
+
+    private void showMatrix(double[][] matrix, boolean[] logicVector) {
+        int n = matrix.length;
+        String[] columnNames = new String[n];
+        for (int i = 0; i < n; i++)
+            columnNames[i] = "X" + (i + 1);
+
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        for (double[] row : matrix) {
+            Object[] objRow = new Object[row.length];
+            for (int j = 0; j < row.length; j++)
+                objRow[j] = row[j];
+            model.addRow(objRow);
+        }
+        matrixTable.setModel(model);
+
+        // Таблиця логічного вектора
+        DefaultTableModel resultModel = new DefaultTableModel(new String[] { "L(i)" }, 0);
+        for (boolean v : logicVector)
+            resultModel.addRow(new Object[] { v });
+        resultTable.setModel(resultModel);
     }
 }

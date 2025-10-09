@@ -1,101 +1,71 @@
 package tasks;
 
-import static utils.Input.*;
+import java.awt.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Scanner;
-
-import series.*;
+import tasks.Task1.Task1Canvas;
+import utils.window.AnimationCanvas;
+import utils.window.FlexibleFrame;
 
 public class Task1 {
+
     public static void run() {
-        try {
-            ArrayList<Linear> linears = readLinears("test/linear.txt");
-            ArrayList<Exponential> exponentials = readExponentials("test/exponential.txt");
+        FlexibleFrame frame = new FlexibleFrame();
+        frame.setTitle("Task 1");
 
-            System.out.println("Read from files");
-            printList(linears);
-            printList(exponentials);
+        Task1Canvas canvas = new Task1Canvas();
+        frame.add(canvas);
 
-            // Sort each list
-            Collections.sort(linears);
-            Collections.sort(exponentials);
-
-            System.out.println("\nAfter sorting");
-            printList(linears);
-            printList(exponentials);
-
-            // Add new records from keyboard
-            System.out.print("\nEnter Linear (first ratio): ");
-            linears.add(new Linear(readDouble(), readDouble()));
-
-            System.out.print("Enter Exponential (first ratio): ");
-            exponentials.add(new Exponential(readDouble(), readDouble()));
-
-            // Sort again
-            Collections.sort(linears);
-            Collections.sort(exponentials);
-
-            System.out.println("\nAfter adding new and sorting again ");
-            printList(linears);
-            printList(exponentials);
-
-            // Combine into one ArrayList<Series>
-            ArrayList<Series> all = new ArrayList<>();
-            all.addAll(linears);
-            all.addAll(exponentials);
-
-            // Sort with Comparator
-            Collections.sort(all, new SeriesComparator());
-
-            System.out.println("\nCombined and sorted (SeriesComparator) ");
-            printList(all);
-
-            // Save to file
-            try (PrintWriter out = new PrintWriter("test/all_series.txt")) {
-                for (Series s : all) {
-                    out.println(s);
-                }
-            }
-
-            System.out.println("\nSaved to test/all_series.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        frame.setVisible(true);
     }
 
-    private static ArrayList<Linear> readLinears(String filename) throws IOException {
-        ArrayList<Linear> list = new ArrayList<>();
-        try (Scanner sc = new Scanner(new File(filename))) {
-            while (sc.hasNextDouble()) {
-                double first = sc.nextDouble();
-                double ratio = sc.nextDouble();
-                list.add(new Linear(first, ratio));
+    static class Task1Canvas extends AnimationCanvas {
+
+        private float size = 50;
+        private float speed = 1.0f;
+        private boolean growing = true;
+
+        public Task1Canvas() {
+            super(10); // 10 мс
+        }
+
+        @Override
+        protected void updateFrame() {
+            if (growing) {
+                size += speed;
+                if (size >= 200)
+                    growing = false;
+            } else {
+                size -= speed;
+                if (size <= 50)
+                    growing = true;
             }
         }
-        return list;
+
+        @Override
+        public void paint(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g;
+
+            Color darkBg = new Color(13, 13, 13);
+            Color orange = new Color(255, 107, 0);
+
+            // Background
+            g2.setColor(darkBg);
+            g2.fillRect(0, 0, getWidth(), getHeight());
+
+            // Circle position
+            int x = getWidth() / 2 - (int) (size / 2);
+            int y = getHeight() / 2 - (int) (size / 2);
+
+            // Gradient
+            Color centerColor = orange;
+            Color edgeColor = centerColor.darker();
+            GradientPaint gp = new GradientPaint(
+                    x + size / 4, y + size / 4, centerColor,
+                    x + size, y + size, edgeColor);
+
+            g2.setPaint(gp);
+            g2.fillOval(x, y, (int) size, (int) size);
+        }
     }
 
-    private static ArrayList<Exponential> readExponentials(String filename) throws IOException {
-        ArrayList<Exponential> list = new ArrayList<>();
-        try (Scanner sc = new Scanner(new File(filename))) {
-            while (sc.hasNextDouble()) {
-                double first = sc.nextDouble();
-                double ratio = sc.nextDouble();
-                list.add(new Exponential(first, ratio));
-            }
-        }
-        return list;
-    }
-
-    private static void printList(Collection<?> list) {
-        for (Object o : list) {
-            System.out.println(o);
-        }
-    }
 }
